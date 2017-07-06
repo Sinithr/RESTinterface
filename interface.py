@@ -1,7 +1,7 @@
 #!/usr/bin/env python3.4
 
 from flask import Flask, jsonify, request, abort
-from math import sqrt
+import math
 
 STORES = (
 ((38.923476, -77.043093), '1827 Adams Mill Rd, DC'),
@@ -51,7 +51,16 @@ def search():
     return jsonify(shops)
 
 def distance(locationA, locationB): # distance between 2 points
-    return sqrt((locationA[0]-locationB[0])**2 + (locationA[1]-locationB[1])**2)
+    R = 6371.0 # km 
+    lon1, lat1, lon2, lat2 = map(math.radians, [locationA[0], locationA[1], locationB[0], locationB[1]])
+
+    # haversine formula 
+    dlon = lon2 - lon1 
+    dlat = lat2 - lat1 
+    a = math.sin(dlat/2)**2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon/2)**2
+    c = 2 * math.asin(math.sqrt(a)) 
+    r = 6371 # Radius of earth in kilometers
+    return c * r
 
 if __name__ == '__main__':
     app.run(debug=True)
